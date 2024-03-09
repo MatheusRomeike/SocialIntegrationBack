@@ -41,6 +41,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 #region Service
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IAutoCompleteService, AutoCompleteService>();
+builder.Services.AddScoped<IPublishService, PublishService>();
 #endregion
 
 #region Repository
