@@ -26,7 +26,6 @@ namespace Api.Controllers
             }
             catch (Exception e)
             {
-
                 _i18nService.Load(Language ?? "");
                 var errorMessage = _i18nService.GetErrorMessage(e.GetType());
                 return ResolveError(errorMessage);

@@ -3,7 +3,6 @@ using Application.Interfaces.ServiceInterfaces;
 using Application.Services;
 using Application.SocialNetworks;
 using Application.Token;
-using Data;
 using Data.Contracts;
 using Data.Repository;
 using Data.Interfaces.RepositoryInterface;
@@ -27,10 +26,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 ConfigureServices(builder.Services);
 
-// Add services to the container.
-
+builder.Logging.AddConsole();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -45,8 +42,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
               ValidateLifetime = true,
               ValidateIssuerSigningKey = true,
 
-              ValidIssuer = "Teste.Securiry.Bearer",
-              ValidAudience = "Teste.Securiry.Bearer",
+              ValidIssuer = "SocialHub.Securiry.Bearer",
+              ValidAudience = "SocialHub.Securiry.Bearer",
               IssuerSigningKey = JwtSecurityKey.Create(Environment.GetEnvironmentVariable("SECRET"))
           };
 
@@ -68,7 +65,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

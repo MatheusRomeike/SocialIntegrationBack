@@ -1,4 +1,5 @@
 ﻿using Application.ViewModels;
+using Domain.Dtos.Token;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace Application.Interfaces.ServiceInterfaces
 {
     public interface IUserService
     {
-        Task<string> LoginAsync(UserViewModel user);
+        Task<TokenDto> LoginAsync(UserViewModel user);
+        Task<bool> RegisterAsync(UserRegisterViewModel user);
     }
 }

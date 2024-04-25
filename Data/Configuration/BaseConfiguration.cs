@@ -14,23 +14,19 @@ namespace Data.Configuration
         public virtual void Configure(EntityTypeBuilder<T> builder)
         {
             builder.Property(i => i.Id)
-                .HasColumnName("id")
                 .ValueGeneratedOnAdd();
 
             builder.HasKey(i => i.Id);
 
             builder.Property(i => i.CreatedAt)
-                .HasColumnName("created_at")
                 .HasColumnType("timestamp without time zone")
                 .IsRequired();
 
             builder.Property(i => i.UpdatedAt)
-                .HasColumnName("updated_at")
                 .HasColumnType("timestamp without time zone")
                 .IsRequired();
 
             builder.Property(i => i.DeletedAt)
-                .HasColumnName("deleted_at")
                 .HasColumnType("timestamp without time zone")
                 .IsRequired(false);
 

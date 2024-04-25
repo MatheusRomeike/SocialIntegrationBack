@@ -7,21 +7,23 @@ using System.Linq.Expressions;
 
 namespace Data.Repository
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
+    public class BaseRepository<T, TDbContext> : IBaseRepository<T>
+        where T : BaseEntity
+        where TDbContext : DataContext
     {
         private readonly DataContext Context;
 
-        public BaseRepository()
+        public BaseRepository(DataContext context)
         {
-            Context = new DataContext();
+            Context = context;
         }
 
-        public virtual async void AddAsync(T entity)
+        public virtual async Task AddAsync(T entity)
         {
             await Context.Set<T>().AddAsync(entity);
         }
 
-        public virtual async void AddAsync(List<T> entity)
+        public virtual async Task AddAsync(List<T> entity)
         {
             await Context.Set<T>().AddRangeAsync(entity);
         }

@@ -14,9 +14,9 @@ namespace Data.Interfaces.RepositoryInterface
         /// Add one entity
         /// </summary>
         /// <param name="entity"></param>
-        void AddAsync(T entity);
+        Task AddAsync(T entity);
 
-        void AddAsync(List<T> entity);
+        Task AddAsync(List<T> entity);
 
         void Update(T entity, Expression<Func<T, object>>[]? properties = null);
 

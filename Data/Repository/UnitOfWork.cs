@@ -4,30 +4,30 @@ using Data.Contracts;
 using System.Data;
 using Application.Context;
 
-namespace Data
+namespace Data.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly DataContext _dataContext;
+        private readonly DataContext Context;
 
-        public UnitOfWork(DataContext dataContext)
+        public UnitOfWork(DataContext context)
         {
-            _dataContext = dataContext;
+            Context = context;
         }
 
         public async Task<bool> CommitAsync()
-        {
-            return await _dataContext.SaveChangesAsync() > 0;
+        {   
+            return await Context.SaveChangesAsync() > 0;
         }
 
         public async Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
         {
-            return await _dataContext.Database.BeginTransactionAsync(isolationLevel);
+            return await Context.Database.BeginTransactionAsync(isolationLevel);
         }
 
-        public async void DisposeAsync()
+        public async Task DisposeAsync()
         {
-            await _dataContext.DisposeAsync();
+            await Context.DisposeAsync();
         }
 
     }

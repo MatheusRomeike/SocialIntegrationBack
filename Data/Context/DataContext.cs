@@ -8,6 +8,8 @@ using Domain.Entities.PostImage;
 using Domain.Entities.SocialNetwork;
 using Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Debug;
 using System.Reflection;
 
 
@@ -15,9 +17,45 @@ namespace Application.Context
 {
     public class DataContext : DbContext
     {
+        public static readonly LoggerFactory _myLoggerFactory = new LoggerFactory(new[] { new DebugLoggerProvider() });
+
         public DataContext() { }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = new CancellationToken())
+        {
+            foreach (var entry in ChangeTracker.Entries<IBaseEntity>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Modified:
+                        entry.Property(i => i.CreatedAt).IsModified = false;
+                        entry.Entity.UpdatedAt = DateTime.Now;
+
+                        break;
+                    case EntityState.Added:
+                        if (entry.Entity.CreatedAt.Year == 1)
+                            entry.Entity.CreatedAt = DateTime.Now;
+
+                        if (entry.Entity.UpdatedAt.Year == 1)
+                            entry.Entity.UpdatedAt = DateTime.Now;
+
+                        break;
+                    case EntityState.Detached:
+                        break;
+                    case EntityState.Unchanged:
+                        break;
+                    case EntityState.Deleted:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -27,6 +65,9 @@ namespace Application.Context
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseNpgsql(connectionString);
+#if DEBUG
+                optionsBuilder.UseLoggerFactory(_myLoggerFactory);
+#endif
                 base.OnConfiguring(optionsBuilder);
             }
         }

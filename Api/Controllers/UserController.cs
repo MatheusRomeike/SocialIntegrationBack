@@ -25,10 +25,17 @@ namespace Api.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("Login")]
-        public Task<IActionResult> Logar([FromBody] UserViewModel user)
+        [HttpPost("LoginAsync")]
+        public Task<IActionResult> LoginAsync([FromBody] UserViewModel user)
         {
             return TaskAsync(async () => await _userService.LoginAsync(user));
+        }
+
+        [AllowAnonymous]
+        [HttpPost("RegisterAsync")]
+        public Task<IActionResult> RegisterAsync([FromBody] UserRegisterViewModel user)
+        {
+            return TaskAsync(async () => await _userService.RegisterAsync(user));
         }
     }
 }

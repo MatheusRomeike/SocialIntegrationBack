@@ -7,6 +7,6 @@ namespace Data.Contracts
     {
         Task<bool> CommitAsync();
         Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted);
-        void DisposeAsync();
+        Task DisposeAsync();
     }
 }
