@@ -33,6 +33,8 @@ namespace Data.Configuration
                 .HasColumnName("deleted_at")
                 .HasColumnType("timestamp without time zone")
                 .IsRequired(false);
+
+            builder.HasQueryFilter(i => i.DeletedAt == null);
         }
     }
 }

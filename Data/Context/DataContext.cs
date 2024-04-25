@@ -33,8 +33,6 @@ namespace Application.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<BaseEntity>().HasQueryFilter(e => e.DeletedAt == null);
-
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(GetType()));
 
             foreach (var table in modelBuilder.Model.GetEntityTypes())
