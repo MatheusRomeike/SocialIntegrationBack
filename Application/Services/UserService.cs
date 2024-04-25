@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utils;
+using Utils.Enums;
 
 namespace Application.Services
 {
@@ -34,9 +35,9 @@ namespace Application.Services
         public async Task<TokenDto> LoginAsync(UserViewModel userModel)
         {
             var user = await _userRepository.GetOneAsync(
-                predicate: p => p.Email == userModel.Email && PasswordHasher.VerifyPassword(p.Password, userModel.Password));
+                predicate: p => p.Email == userModel.Email);
 
-            if (user != null)
+            if (user != null && PasswordHasher.VerifyPassword(user?.Password, userModel.Password))
             {
                 var token = new TokenJWTBuilder()
                 .AddSecurityKey(JwtSecurityKey.Create(Environment.GetEnvironmentVariable("SECRET")))
@@ -57,13 +58,13 @@ namespace Application.Services
                 return authenticationResult;
             }
             else
-                throw new Exception("Email ou senha inválidos.");
+                throw new Exception("Email ou senha inválidos");
         }
 
         public async Task<bool> RegisterAsync(UserRegisterViewModel userModel)
         {
             if (await _userRepository.AnyAsync(predicate: p => p.Email == userModel.Email))
-                throw new Exception("Email já cadastrado.");
+                throw new Exception("Email já cadastrado");
 
             var passwordHash = PasswordHasher.HashPassword(userModel.Password);
 

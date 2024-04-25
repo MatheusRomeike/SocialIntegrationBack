@@ -5,7 +5,6 @@ using Application.Services;
 using Application.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Utils.I18n.Interfaces;
 
 namespace Api.Controllers
 {
@@ -18,8 +17,7 @@ namespace Api.Controllers
     {
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService, II18nService i18nService)
-            : base(i18nService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
         }

@@ -3,7 +3,6 @@ using Application.Interfaces.ServiceInterfaces;
 using Application.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Utils.I18n.Interfaces;
 
 namespace Api.Controllers
 {
@@ -15,8 +14,7 @@ namespace Api.Controllers
     {
         private readonly IPublishService _publishService;
 
-        public PublishController(IPublishService publishService, II18nService i18nService)
-            : base(i18nService)
+        public PublishController(IPublishService publishService)
         {
             _publishService = publishService;
         }

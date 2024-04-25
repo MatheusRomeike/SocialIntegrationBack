@@ -9,8 +9,6 @@ using Data.Interfaces.RepositoryInterface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Npgsql;
-using Utils.I18n.Interfaces;
 
 #region Npgsql
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -102,8 +100,6 @@ void ConfigureServices(IServiceCollection services)
 
 
     services.AddScoped<IUnitOfWork, UnitOfWork>();
-    services.AddScoped<II18nService, DefaultI18nService>();
-
 
     services.AddScoped<IAccountRepository, AccountRepository>();
     services.AddScoped<ICompanyRepository, CompanyRepository>();
