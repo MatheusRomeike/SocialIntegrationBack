@@ -1,14 +1,17 @@
 using Application.Context;
-using Application.Interfaces;
+using Application.Interfaces.ServiceInterfaces;
 using Application.Services;
+using Application.SocialNetworks;
 using Application.Token;
+using Data;
+using Data.Contracts;
 using Data.Repository;
-using Domain.Domain.Dtos.AutoComplete.Contracts;
-using Domain.Domain.Login.Contracts;
+using Data.Interfaces.RepositoryInterface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
+using Utils.I18n.Interfaces;
 
 #region Npgsql
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -22,34 +25,14 @@ DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
 
+ConfigureServices(builder.Services);
+
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-#region DbContext
-string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-
-builder.Services.AddDbContext<DataContext>(options =>
-                options.UseNpgsql(connectionString));
-#endregion
-
-#region DI
-
-#region Service
-builder.Services.AddScoped<ILoginService, LoginService>();
-builder.Services.AddScoped<IAutoCompleteService, AutoCompleteService>();
-builder.Services.AddScoped<IPublishService, PublishService>();
-#endregion
-
-#region Repository
-builder.Services.AddTransient<ILoginRepository, LoginRepository>();
-builder.Services.AddScoped<IAutoCompleteRepository, AutoCompleteRepository>();
-#endregion
-
-#endregion
 
 #region Token JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -64,7 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
               ValidIssuer = "Teste.Securiry.Bearer",
               ValidAudience = "Teste.Securiry.Bearer",
-              IssuerSigningKey = JwtSecurityKey.Create("Secret_Key-12345678")
+              IssuerSigningKey = JwtSecurityKey.Create(Environment.GetEnvironmentVariable("SECRET"))
           };
 
           option.Events = new JwtBearerEvents
@@ -114,3 +97,32 @@ app.MapControllers();
 app.UseSwaggerUI();
 
 app.Run();
+
+void ConfigureServices(IServiceCollection services)
+{
+    string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+    services.AddDbContext<DataContext>(options =>
+                    options.UseNpgsql(connectionString));
+
+
+    services.AddScoped<IUnitOfWork, UnitOfWork>();
+    services.AddScoped<II18nService, DefaultI18nService>();
+
+
+    services.AddScoped<IAccountRepository, AccountRepository>();
+    services.AddScoped<ICompanyRepository, CompanyRepository>();
+    services.AddScoped<IImageRepository, ImageRepository>();
+    services.AddScoped<IPostGroupRepository, PostGroupRepository>();
+    services.AddScoped<IPostImageRepository, PostImageRepository>();
+    services.AddScoped<IPostRepository, PostRepository>();
+    services.AddScoped<ISocialNetworkRepository, SocialNetworkRepository>();
+    services.AddScoped<IUserRepository, UserRepository>();
+
+
+    services.AddScoped<IPublishService, PublishService>();
+    services.AddScoped<IRestClientService, RestClientService>();
+    services.AddScoped<IUserService, UserService>();
+
+
+    services.AddScoped<ISocialNetworkService, XService>();
+}

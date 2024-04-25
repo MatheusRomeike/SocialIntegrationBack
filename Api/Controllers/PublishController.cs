@@ -1,10 +1,9 @@
 ﻿using Api.Models;
-using Application.Interfaces;
-using Application.Services;
+using Application.Interfaces.ServiceInterfaces;
 using Application.ViewModels;
-using Domain.Domain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Utils.I18n.Interfaces;
 
 namespace Api.Controllers
 {
@@ -14,37 +13,18 @@ namespace Api.Controllers
     [Authorize]
     public class PublishController : BaseController
     {
-        #region Atributos
         private readonly IPublishService _publishService;
-        #endregion
 
-        #region Construtor
-        public PublishController(IPublishService publishService)
+        public PublishController(IPublishService publishService, II18nService i18nService)
+            : base(i18nService)
         {
             _publishService = publishService;
         }
-        #endregion
 
-        #region HttpPost
         [HttpPost("Publish")]
-        [AllowAnonymous]
-        [ProducesResponseType(typeof(StandardReturn<bool>), 200)]
-        [ProducesResponseType(typeof(Exception), 400)]
-        [ProducesResponseType(500)]
         public Task<IActionResult> Publish([FromBody] PublishViewModel model)
         {
-            return Task.Run(async () =>
-            {
-                try
-                {
-                    return Ok(new StandardReturn<bool>(ReturnStatus.Ok, await _publishService.PublishAsync(model)));
-                }
-                catch (Exception e)
-                {
-                    return ResolveError(e);
-                }
-            });
+            return TaskAsync(async () => await _publishService.PublishAsync(model, UserId));
         }
-        #endregion
     }
 }

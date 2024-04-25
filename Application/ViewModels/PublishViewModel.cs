@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Entities.SocialNetwork.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,9 @@ namespace Application.ViewModels
 {
     public class PublishViewModel
     {
-        public string Text { get; set; }
-        public bool X { get; set; }
-        public bool Instagram { get; set; }
+        public string PostGroupTitle { get; set; }
+        public string PostGroupDescription { get; set; }
+        public string Content { get; set; }
+        public List<SocialNetworkType> SocialNetworkTypes { get; set; }
     }
 }

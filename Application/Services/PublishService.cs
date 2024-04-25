@@ -1,59 +1,69 @@
-﻿using Application.Interfaces;
-using System;
-using RestSharp;
-using RestSharp.Authenticators;
-using RestSharp.Authenticators.OAuth;
-using Newtonsoft.Json;
-using Application.ViewModels;
+﻿using Application.ViewModels;
+using Application.Interfaces.ServiceInterfaces;
+using Domain.Entities.PostGroup;
+using Domain.Entities.SocialNetwork.Enums;
+using Domain.Entities.Post;
+using Data.Interfaces.RepositoryInterface;
 
 namespace Application.Services
 {
     public class PublishService : IPublishService
     {
-        #region Atributos
-        private readonly HttpClient _httpClient;
-        #endregion
+        private readonly IEnumerable<ISocialNetworkService> _socialNetworkServices;
+        private readonly IPostGroupRepository _postGroupRepository;
+        private readonly IAccountRepository _accountRepository;
+        private readonly ISocialNetworkRepository _socialNetworkRepository;
 
-        #region Construtor
-        public PublishService()
+        public PublishService(
+            IEnumerable<ISocialNetworkService> socialNetworkServices,
+            IPostGroupRepository postGroupRepository,
+            IAccountRepository accountRepository,
+            ISocialNetworkRepository socialNetworkRepository)
         {
-            _httpClient = new HttpClient();
+            _socialNetworkServices = socialNetworkServices;
+            _postGroupRepository = postGroupRepository;
+            _accountRepository = accountRepository;
+            _socialNetworkRepository = socialNetworkRepository;
         }
-        #endregion
 
-        #region Métodos
 
-        public async Task<bool> PublishAsync(PublishViewModel model)
+        public async Task<bool> PublishAsync(PublishViewModel model, long userId)
         {
-            if (model.X)
-                await PublishTwitterAsync(model.Text);
+            var accounts = await _accountRepository.GetAllAsync(
+                predicate: p => model.SocialNetworkTypes.Contains((SocialNetworkType)p.SocialNetworkId));
+
+            var socialNetworks = await _socialNetworkRepository.GetAllAsync(
+                               predicate: p => model.SocialNetworkTypes.Contains((SocialNetworkType)p.Id));
+
+            var socialNetworkService = GetSocialNetworkServices(model.SocialNetworkTypes);
+
+            List<Post> posts = new List<Post>();
+
+            foreach (var service in socialNetworkService)
+            {
+                posts.AddRange(await service.PublishAsync(model.Content, socialNetworks.First(x => (SocialNetworkType)x.Id == service.SocialNetworkType), accounts));
+            }
+
+            var postGroup = new PostGroup()
+            {
+                Name = model.PostGroupTitle,
+                Description = model.PostGroupDescription,
+                Content = model.Content,
+                UserId = userId,
+                Posts = posts
+            };
+
             return true;
         }
 
-        private async Task<bool> PublishTwitterAsync(string tweetText)
+        public IEnumerable<ISocialNetworkService> GetSocialNetworkServices(List<SocialNetworkType> socialNetworkTypes)
         {
-            var options = new RestClientOptions();
+            var compatibleServices = _socialNetworkServices
+                .Where(service => socialNetworkTypes.Contains(service.SocialNetworkType))
+                .ToList();
 
-            var oAuth1 = OAuth1Authenticator.ForAccessToken(
-                            consumerKey: "EOO7UjWUEmHInrbvCzX28rZWK",
-                            consumerSecret: "8UBpIQy4TVcwpRqtUoxijBMLr9r7SfEQ9QnvzDbwNdugV0JYE5",
-                            token: "1386177872142942213-c7fRpoBjn7Gy96jXc3s5FRbGapibpu",
-                            tokenSecret: "Mi7SFkho0myZZsYyzzN6TSIplEDt4vQLKAG5ssf8frEZA",
-                            OAuthSignatureMethod.HmacSha1);
-
-            options.Authenticator = oAuth1;
-
-            var client = new RestClient(options);
-
-            var request = new RestRequest("https://api.twitter.com/2/tweets", Method.Post);
-            request.AddHeader("Content-Type", "application/json");
-            request.AddParameter("application/json", JsonConvert.SerializeObject(new { text = tweetText }), ParameterType.RequestBody);
-
-            var response = client.Execute(request);
-
-            return true;
+            return compatibleServices;
         }
 
-        #endregion
     }
 }

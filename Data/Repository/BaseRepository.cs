@@ -1,119 +1,157 @@
 ﻿using Application.Context;
-using Domain.Domain.Core.Contracts;
+using Domain.Entities.Core;
+using Data.Interfaces.RepositoryInterface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.Win32.SafeHandles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Data.Repository
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : class
+    public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
-        #region Atributos
-        private readonly DataContext context;
-        #endregion
+        private readonly DataContext Context;
 
-        #region Construtor
         public BaseRepository()
         {
-            context = new DataContext();
-        }
-        #endregion
-
-        #region Métodos
-        public virtual void Add(T objeto)
-        {
-            context.Add(objeto);
-            context.SaveChanges();
+            Context = new DataContext();
         }
 
-        public void Add(IEnumerable<T> objetos)
+        public virtual async void AddAsync(T entity)
         {
-            context.AddRange(objetos);
-            context.SaveChanges();
+            await Context.Set<T>().AddAsync(entity);
         }
 
-        public virtual IEnumerable<T> LoadAll()
+        public virtual async void AddAsync(List<T> entity)
         {
-            return context.Set<T>().ToList();
+            await Context.Set<T>().AddRangeAsync(entity);
         }
 
-        public virtual void Update(T objeto)
+        public virtual void Update(T entity, params Expression<Func<T, object>>[]? properties)
         {
-            context.Update(objeto);
-            context.SaveChanges();
-        }
-
-        public virtual void Delete(T objeto)
-        {
-            context.Remove(objeto);
-            context.SaveChanges();
-        }
-
-        public virtual T LoadById(int id)
-        {
-            return context.Find<T>(id);
-        }
-
-        public T? LoadFirstBy(
-            Expression<Func<T, bool>>? predicate = null,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
-            Expression<Func<T, T>>? selector = null)
-        {
-            var query = GetQuery(predicate: predicate, limit: 1, include: include, selector: selector);
-            return query.FirstOrDefault();
-        }
-
-        public virtual T? LoadLastBy(
-            Expression<Func<T, bool>>? predicate = null,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-            Expression<Func<T, T>>? selector = null)
-        {
-            var query = GetQuery(predicate, include, limit: 1, orderBy: orderBy, selector: selector);
-            return query.LastOrDefault();
-        }
-
-        public virtual IEnumerable<T> LoadAll(
-            Expression<Func<T, bool>>? predicate = null,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
-            int? limit = null,
-            Expression<Func<T, T>>? selector = null)
-        {
-            var query = GetQuery(predicate: predicate, limit: limit, include: include, selector: selector);
-            return query.ToList();
-        }
-
-        public IQueryable<T> GetQuery(
-            Expression<Func<T, bool>>? predicate = null,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-            int? limit = null,
-            Expression<Func<T, T>>? selector = null)
-        {
-            IQueryable<T> query = context.Set<T>().AsQueryable();
-
-            if (predicate != null)
-                query = query.Where(predicate);
-
-            if (limit != null)
-                query = query.Take(limit.Value);
-
-            if (orderBy != null)
-                query = orderBy(query);
-
-            if (include != null)
+            if (properties != null)
             {
-                query = include(query);
+                UpdateProperties(entity, properties);
             }
+            else
+            {
+                Context.Set<T>().Update(entity);
+            }
+        }
 
+        public virtual void Update(List<T> entities, params Expression<Func<T, object>>[]? properties)
+        {
+            if (properties != null)
+            {
+                foreach (var entity in entities)
+                {
+                    UpdateProperties(entity, properties);
+                }
+            }
+            else
+            {
+                Context.Set<T>().UpdateRange(entities);
+            }
+        }
+
+        private void UpdateProperties(T entity, params Expression<Func<T, object>>[] properties)
+        {
+            foreach (var property in properties)
+            {
+                Context.Entry(entity).Property(property).IsModified = true;
+            }
+        }
+
+        public virtual void Delete(T entity)
+        {
+            entity.DeletedAt = DateTime.Now;
+            Update(entity, x => x.DeletedAt);
+        }
+
+        public virtual void Delete(List<T> entities)
+        {
+            entities.ForEach(x => x.DeletedAt = DateTime.Now);
+            Update(entities, x => x.DeletedAt);
+        }
+
+        public virtual async Task<long> CountAsync(Expression<Func<T, bool>>? predicate = null, Expression<Func<T, long>>? groupBy = null)
+        {
+            if (groupBy != null)
+            {
+                var query = Get(predicate);
+                var groupedQuery = query.GroupBy(groupBy);
+                return await groupedQuery.CountAsync();
+            }
+            else
+            {
+                var query = Get(predicate);
+                return await query.CountAsync();
+            }
+        }
+
+        public virtual async Task<bool> AnyAsync(Expression<Func<T, bool>>? predicate = null)
+        {
+            IQueryable<T> query = Context.Set<T>();
+            return await query.AnyAsync(predicate);
+        }
+
+        public virtual async Task<IEnumerable<T>> GetAllAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Expression<Func<T, T>>? selector = null,
+            bool disableTracking = false,
+            bool ignoreQueryFilters = false,
+            int? skip = null,
+            int? limit = null)
+        {
+            var query = Get(
+                predicate: predicate,
+                orderBy: orderBy,
+                include: include,
+                selector: selector,
+                disableTracking: disableTracking,
+                skip: skip,
+                limit: limit);
+
+            return await query.ToListAsync();
+        }
+
+        public virtual async Task<T> GetOneAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            Expression<Func<T, T>>? selector = null,
+            bool disableTracking = false,
+            bool ignoreQueryFilters = false)
+        {
+            var query = Get(
+                predicate: predicate,
+                orderBy: orderBy,
+                include: include,
+                selector: selector,
+                disableTracking: disableTracking);
+
+
+            return await query.FirstOrDefaultAsync();
+        }
+
+        public IQueryable<T> Get(Expression<Func<T, bool>>? predicate = null,
+           Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+           Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+           Expression<Func<T, T>>? selector = null,
+           bool disableTracking = false,
+           bool ignoreQueryFilters = false,
+           int? skip = null,
+           int? limit = null)
+        {
+            var query = GetIQueryable(
+                predicate: predicate,
+                orderBy: orderBy,
+                include: include,
+                disableTracking: disableTracking,
+                ignoreQueryFilters: ignoreQueryFilters,
+                skip: skip,
+                limit: limit);
             if (selector != null)
             {
                 query = query.Select(selector).AsQueryable();
@@ -121,19 +159,51 @@ namespace Data.Repository
 
             return query;
         }
-        public void PartialUpdate(T entity, params Expression<Func<T, object>>[] properties)
-        {
-            var propertyNames = properties.Select(i => i.Name).ToArray();
-            PartialUpdate(entity, propertyNames);
-        }
 
-        public void PartialUpdate(T entity, string[] properties)
+        private IQueryable<T> GetIQueryable<T>(Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            bool disableTracking = false,
+            bool ignoreQueryFilters = false,
+            int? skip = null,
+            int? limit = null) where T : class
         {
-            foreach (var property in properties)
+            IQueryable<T> query = Context.Set<T>();
+
+            if (include != null)
             {
-                context.Entry(entity).Property(property).IsModified = true;
+                query = include(query);
             }
+
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            if (skip != null)
+            {
+                query = query.Skip(skip.Value);
+            }
+
+            if (limit != null)
+            {
+                query = query.Take(limit.Value);
+            }
+
+            if (disableTracking)
+            {
+                query = query.AsNoTracking();
+            }
+            if (ignoreQueryFilters)
+            {
+                query = query.IgnoreQueryFilters();
+            }
+            return query;
         }
-        #endregion
     }
 }
