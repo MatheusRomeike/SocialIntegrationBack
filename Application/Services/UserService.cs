@@ -4,14 +4,7 @@ using Application.ViewModels;
 using Data.Contracts;
 using Data.Interfaces.RepositoryInterface;
 using Domain.Dtos.Token;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Utils;
-using Utils.Enums;
 
 namespace Application.Services
 {
@@ -40,7 +33,7 @@ namespace Application.Services
             if (user != null && PasswordHasher.VerifyPassword(user?.Password, userModel.Password))
             {
                 var token = new TokenJWTBuilder()
-                .AddSecurityKey(JwtSecurityKey.Create(Environment.GetEnvironmentVariable("SECRET")))
+                .AddSecurityKey(JwtSecurityKey.Create(Environment.GetEnvironmentVariable("SECRET_TOKEN")))
                 .AddSubject("Token")
                 .AddIssuer("SocialHub.Security.Bearer")
                 .AddAudience("SocialHub.Security.Bearer")
@@ -58,13 +51,13 @@ namespace Application.Services
                 return authenticationResult;
             }
             else
-                throw new Exception("Email ou senha inválidos");
+                throw new Exception(i18n.Email_Or_Password_Invalid);
         }
 
         public async Task<bool> RegisterAsync(UserRegisterViewModel userModel)
         {
             if (await _userRepository.AnyAsync(predicate: p => p.Email == userModel.Email))
-                throw new Exception("Email já cadastrado");
+                throw new Exception(i18n.Email_Already_Registered);
 
             var passwordHash = PasswordHasher.HashPassword(userModel.Password);
 
@@ -75,7 +68,6 @@ namespace Application.Services
                 Password = passwordHash,
                 Role = userModel.Role,
                 CompanyId = userModel.CompanyId,
-                Language = userModel.Language
             });
             return await _unitOfWork.CommitAsync();
         }

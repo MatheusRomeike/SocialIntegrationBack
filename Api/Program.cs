@@ -42,7 +42,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
               ValidIssuer = "SocialHub.Securiry.Bearer",
               ValidAudience = "SocialHub.Securiry.Bearer",
-              IssuerSigningKey = JwtSecurityKey.Create(Environment.GetEnvironmentVariable("SECRET"))
+              IssuerSigningKey = JwtSecurityKey.Create(Environment.GetEnvironmentVariable("SECRET_TOKEN"))
           };
 
           option.Events = new JwtBearerEvents

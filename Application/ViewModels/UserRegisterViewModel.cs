@@ -14,6 +14,5 @@ namespace Application.ViewModels
         public string Password { get; set; }
         public UserRole Role { get; set; }
         public long CompanyId { get; set; }
-        public string Language { get; set; }
     }
 }

@@ -14,7 +14,8 @@ namespace Data.Configuration
             builder.Property(x => x.Email).IsRequired().HasMaxLength(100);
             builder.Property(x => x.Password).IsRequired().HasMaxLength(100);
             builder.Property(x => x.Role).IsRequired();
-            builder.Property(x => x.Language).IsRequired().HasMaxLength(5);
+
+            builder.HasIndex(x => x.Email).IsUnique();
 
             builder.HasOne(x => x.Company)
                 .WithMany(x => x.Users)
