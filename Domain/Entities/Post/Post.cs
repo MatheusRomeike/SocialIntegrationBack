@@ -15,7 +15,5 @@ namespace Domain.Entities.Post
 
         public long AccountId { get; set; }
         public Account.Account Account { get; set; }
-
-        public virtual ICollection<PostImage.PostImage> PostImages { get; set; }
     }
 }

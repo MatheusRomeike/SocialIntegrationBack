@@ -26,6 +26,7 @@ namespace Api.Controllers
         [HttpPost("LoginAsync")]
         public Task<IActionResult> LoginAsync([FromBody] UserViewModel user)
         {
+            Console.WriteLine(user.Date);
             return TaskAsync(async () => await _userService.LoginAsync(user));
         }
 

@@ -16,11 +16,6 @@ namespace Data.Configuration
                 .WithOne(x => x.Company)
                 .HasForeignKey(x => x.CompanyId)
                 .IsRequired();
-
-            builder.HasMany(x => x.Images)
-                .WithOne(x => x.Company)
-                .HasForeignKey(x => x.CompanyId)
-                .IsRequired();
         }
     }
 }

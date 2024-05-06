@@ -103,9 +103,7 @@ void ConfigureServices(IServiceCollection services)
 
     services.AddScoped<IAccountRepository, AccountRepository>();
     services.AddScoped<ICompanyRepository, CompanyRepository>();
-    services.AddScoped<IImageRepository, ImageRepository>();
     services.AddScoped<IPostGroupRepository, PostGroupRepository>();
-    services.AddScoped<IPostImageRepository, PostImageRepository>();
     services.AddScoped<IPostRepository, PostRepository>();
     services.AddScoped<ISocialNetworkRepository, SocialNetworkRepository>();
     services.AddScoped<IUserRepository, UserRepository>();

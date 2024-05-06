@@ -16,6 +16,5 @@ namespace Domain.Entities.Company
         public string Description { get; set; }
 
         public virtual ICollection<User.User> Users { get; set; }
-        public virtual ICollection<Image.Image> Images { get; set; }
     }
 }
