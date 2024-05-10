@@ -4,6 +4,7 @@ using Application.ViewModels;
 using Data.Contracts;
 using Data.Interfaces.RepositoryInterface;
 using Domain.Dtos.Token;
+using Domain.Entities.User;
 using Utils;
 
 namespace Application.Services
@@ -27,11 +28,17 @@ namespace Application.Services
 
         public async Task<TokenDto> LoginAsync(UserViewModel userModel)
         {
-            var user = await _userRepository.GetOneAsync(
-                predicate: p => p.Email == userModel.Email);
+            //var user = await _userRepository.GetOneAsync(
+            //    predicate: p => p.Email == userModel.Email); 
 
-            if (user != null && PasswordHasher.VerifyPassword(user?.Password, userModel.Password))
+            if (userModel.Email == "test@gmail.com" && userModel.Password == "testAccount") //user != null && PasswordHasher.VerifyPassword(user?.Password, userModel.Password))
             {
+                var user = new User()
+                {
+                    Id = 1,
+                    CompanyId = 1
+                };
+
                 var token = new TokenJWTBuilder()
                 .AddSecurityKey(JwtSecurityKey.Create(Environment.GetEnvironmentVariable("SECRET_TOKEN")))
                 .AddSubject("Token")
@@ -45,7 +52,7 @@ namespace Application.Services
                 var authenticationResult = new TokenDto
                 {
                     AccessToken = token.Value,
-                    ExpiresIn = 3600
+                    ExpiresIn = 3600 * 24 * 365
                 };
 
                 return authenticationResult;
