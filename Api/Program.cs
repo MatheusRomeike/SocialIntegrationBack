@@ -70,16 +70,16 @@ if (app.Environment.IsDevelopment())
 }
 
 #region Access
-//var urlDev = "https://dominiodocliente.com.br";
 //var urlHML = "https://dominiodocliente2.com.br";
 //var urlPROD = "https://dominiodocliente3.com.br";
 //app.UseCors(b => b.WithOrigins(urlDev, urlHML, urlPROD));
 
-var devCliente = "http://localhost:4200";
+var urlDev = "https://pocmatheus.web.app";
+var urlDevLocal = "http://localhost:4200";
 app.UseCors(x => x
     .AllowAnyOrigin()
     .AllowAnyMethod()
-    .AllowAnyHeader().WithOrigins(devCliente));
+    .AllowAnyHeader().WithOrigins(urlDev, urlDevLocal));
 #endregion
 
 app.UseHttpsRedirection();
