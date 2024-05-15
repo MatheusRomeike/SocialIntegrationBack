@@ -3,7 +3,9 @@ using Application.Token;
 using Application.ViewModels;
 using Data.Contracts;
 using Data.Interfaces.RepositoryInterface;
+using Data.Repository;
 using Domain.Dtos.Token;
+using Domain.Entities.Account;
 using Domain.Entities.User;
 using Utils;
 
@@ -18,7 +20,8 @@ namespace Application.Services
         public UserService(
             IUserRepository userRepository,
             IUnitOfWork unitOfWork,
-            ICompanyRepository companyRepository)
+            ICompanyRepository companyRepository
+            )
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;

@@ -15,9 +15,12 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
 #endregion
 
-#region Envinroment
-DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
-
+#region Environment
+#if DEBUG
+DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env.local"));
+#else
+    DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
+#endif
 #endregion
 
 var builder = WebApplication.CreateBuilder(args);
@@ -112,7 +115,8 @@ void ConfigureServices(IServiceCollection services)
     services.AddScoped<IPublishService, PublishService>();
     services.AddScoped<IRestClientService, RestClientService>();
     services.AddScoped<IUserService, UserService>();
+    services.AddScoped<ISocialNetworkService, SocialNetworkService>();
 
 
-    services.AddScoped<ISocialNetworkService, XService>();
+    services.AddScoped<ISocialNetworkPublishService, XService>();
 }

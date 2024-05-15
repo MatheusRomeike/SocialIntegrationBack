@@ -10,7 +10,6 @@ namespace Data.Configuration
             base.Configure(builder);
 
             builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
-            builder.Property(x => x.Description).IsRequired().HasMaxLength(255);
             builder.Property(x => x.Url).IsRequired().HasMaxLength(255);
             builder.Property(x => x.BaseUrlApi).IsRequired().HasMaxLength(255);
 

@@ -1,5 +1,6 @@
 ﻿using Application.ViewModels;
 using Domain.Dtos.Token;
+using Domain.Entities.Account;
 using System;
 using System.Collections.Generic;
 using System.Linq;

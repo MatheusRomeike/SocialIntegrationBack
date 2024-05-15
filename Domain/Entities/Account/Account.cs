@@ -13,6 +13,7 @@ namespace Domain.Entities.Account
         public Account() { }
 
 
+        public long AccountSocialNetworkId { get; set; }
         public string Name { get; set; }
         public string ConsumerKey { get; set; }
         public string ConsumerSecret { get; set; }

@@ -9,13 +9,13 @@ namespace Application.Services
 {
     public class PublishService : IPublishService
     {
-        private readonly IEnumerable<ISocialNetworkService> _socialNetworkServices;
+        private readonly IEnumerable<ISocialNetworkPublishService> _socialNetworkServices;
         private readonly IPostGroupRepository _postGroupRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly ISocialNetworkRepository _socialNetworkRepository;
 
         public PublishService(
-            IEnumerable<ISocialNetworkService> socialNetworkServices,
+            IEnumerable<ISocialNetworkPublishService> socialNetworkServices,
             IPostGroupRepository postGroupRepository,
             IAccountRepository accountRepository,
             ISocialNetworkRepository socialNetworkRepository)
@@ -56,7 +56,7 @@ namespace Application.Services
             return true;
         }
 
-        public IEnumerable<ISocialNetworkService> GetSocialNetworkServices(List<SocialNetworkType> socialNetworkTypes)
+        public IEnumerable<ISocialNetworkPublishService> GetSocialNetworkServices(List<SocialNetworkType> socialNetworkTypes)
         {
             var compatibleServices = _socialNetworkServices
                 .Where(service => socialNetworkTypes.Contains(service.SocialNetworkType))

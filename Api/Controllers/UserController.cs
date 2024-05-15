@@ -36,5 +36,6 @@ namespace Api.Controllers
         {
             return TaskAsync(async () => await _userService.RegisterAsync(user));
         }
+
     }
 }

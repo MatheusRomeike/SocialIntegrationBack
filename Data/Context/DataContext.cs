@@ -6,8 +6,6 @@ using Domain.Entities.PostGroup;
 using Domain.Entities.SocialNetwork;
 using Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Debug;
 using System.Reflection;
 
 
@@ -15,8 +13,6 @@ namespace Application.Context
 {
     public class DataContext : DbContext
     {
-        public static readonly LoggerFactory _myLoggerFactory = new LoggerFactory(new[] { new DebugLoggerProvider() });
-
         public DataContext() { }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
@@ -57,15 +53,20 @@ namespace Application.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
+            #region Environment
+#if DEBUG
+            DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env.local"));
+#else
+                DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
+#endif
+            #endregion
+
             var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseNpgsql(connectionString);
-#if DEBUG
-                optionsBuilder.UseLoggerFactory(_myLoggerFactory);
-#endif
+
                 base.OnConfiguring(optionsBuilder);
             }
         }

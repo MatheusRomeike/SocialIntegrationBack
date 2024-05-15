@@ -13,7 +13,7 @@ using Domain.Dtos.X;
 
 namespace Application.SocialNetworks
 {
-    public class XService : ISocialNetworkService
+    public class XService : ISocialNetworkPublishService
     {
         public SocialNetworkType SocialNetworkType => SocialNetworkType.X;
 

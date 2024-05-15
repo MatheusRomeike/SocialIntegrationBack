@@ -10,6 +10,8 @@ namespace Data.Configuration
         {
             base.Configure(builder);
 
+            builder.Property(x => x.AccountSocialNetworkId).IsRequired();
+
             builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
 
             builder.HasOne(x => x.User)
