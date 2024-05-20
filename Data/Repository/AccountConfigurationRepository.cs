@@ -6,11 +6,11 @@ using Domain.Entities.Account;
 
 namespace Data.Repository
 {
-    public class AccountRepository : BaseRepository<Account, DataContext>, IAccountRepository
+    public class AccountConfigurationRepository : BaseRepository<AccountConfiguration, DataContext>, IAccountConfigurationRepository
     {
         private readonly DataContext Context;
 
-        public AccountRepository(DataContext context) : base(context)
+        public AccountConfigurationRepository(DataContext context) : base(context)
         {
             this.Context = context;
         }

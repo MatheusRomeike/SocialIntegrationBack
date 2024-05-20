@@ -13,8 +13,7 @@ namespace Data.Configuration
     {
         public virtual void Configure(EntityTypeBuilder<T> builder)
         {
-            builder.Property(i => i.Id)
-                .ValueGeneratedOnAdd();
+            builder.Property(i => i.Id);
 
             builder.HasKey(i => i.Id);
 

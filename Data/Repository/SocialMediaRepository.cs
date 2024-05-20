@@ -1,16 +1,16 @@
 ﻿using Domain.Entities.User;
 using Data.Interfaces.RepositoryInterface;
 using Application.Context;
-using Domain.Entities.Account;
+using Domain.Entities.SocialMedia;
 
 
 namespace Data.Repository
 {
-    public class AccountRepository : BaseRepository<Account, DataContext>, IAccountRepository
+    public class SocialMediaRepository : BaseRepository<SocialMedia, DataContext>, ISocialMediaRepository
     {
         private readonly DataContext Context;
 
-        public AccountRepository(DataContext context) : base(context)
+        public SocialMediaRepository(DataContext context) : base(context)
         {
             this.Context = context;
         }

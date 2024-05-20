@@ -1,9 +1,7 @@
 ﻿using Domain.Entities.Account;
-using Domain.Entities.Company;
 using Domain.Entities.Core;
 using Domain.Entities.Post;
-using Domain.Entities.PostGroup;
-using Domain.Entities.SocialNetwork;
+using Domain.Entities.SocialMedia;
 using Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -88,11 +86,12 @@ namespace Application.Context
             base.OnModelCreating(modelBuilder);
         }
 
+
+        public DbSet<AccountConfiguration> AccountConfiguration { get; set; }
         public DbSet<Account> Account { get; set; }
-        public DbSet<Company> Company { get; set; }
         public DbSet<Post> Post { get; set; }
-        public DbSet<PostGroup> PostGroup { get; set; }
-        public DbSet<SocialNetwork> SocialNetwork { get; set; }
+        public DbSet<SocialMediaConfiguration> SocialMediaConfiguration { get; set; }
+        public DbSet<SocialMedia> SocialMedia { get; set; }
         public DbSet<User> User { get; set; }
 
     }

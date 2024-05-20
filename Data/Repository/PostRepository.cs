@@ -1,11 +1,8 @@
-﻿using Domain.Entities.Post;
+﻿using Domain.Entities.User;
 using Data.Interfaces.RepositoryInterface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Application.Context;
+using Domain.Entities.Post;
+
 
 namespace Data.Repository
 {

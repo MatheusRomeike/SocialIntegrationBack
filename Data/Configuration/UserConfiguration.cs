@@ -1,5 +1,4 @@
-﻿using Domain.Entities.Company;
-using Domain.Entities.User;
+﻿using Domain.Entities.User;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Configuration
@@ -13,24 +12,13 @@ namespace Data.Configuration
             builder.Property(x => x.Name).IsRequired().HasMaxLength(60);
             builder.Property(x => x.Email).IsRequired().HasMaxLength(100);
             builder.Property(x => x.Password).IsRequired().HasMaxLength(100);
-            builder.Property(x => x.Role).IsRequired();
 
             builder.HasIndex(x => x.Email).IsUnique();
 
-            builder.HasOne(x => x.Company)
-                .WithMany(x => x.Users)
-                .HasForeignKey(x => x.CompanyId)
-                .IsRequired();
-
-            builder.HasMany(x => x.PostGroups)
+            builder
+                .HasMany(x => x.Accounts)
                 .WithOne(x => x.User)
-                .HasForeignKey(x => x.UserId)
-                .IsRequired();
-
-            builder.HasMany(x => x.Accounts)
-                .WithOne(x => x.User)
-                .HasForeignKey(x => x.UserId)
-                .IsRequired();
+                .HasForeignKey(x => x.UserId);
         }
     }
 }

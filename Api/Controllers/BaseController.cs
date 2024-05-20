@@ -6,7 +6,6 @@ namespace Api.Controllers
     public class BaseController : ControllerBase
     {
         public long UserId => Convert.ToInt64(HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == "UserId")?.Value);
-        public long CompanyId => Convert.ToInt64(HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == "CompanyId")?.Value);
 
         protected async Task<IActionResult> TaskAsync(Func<Task<dynamic>> action)
         {

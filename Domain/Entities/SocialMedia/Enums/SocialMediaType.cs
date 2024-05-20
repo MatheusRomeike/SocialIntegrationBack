@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities.SocialNetwork.Enums
+namespace Domain.Entities.SocialMedia.Enums
 {
-    public enum SocialNetworkType
+    public enum SocialMediaType
     {
         X = 1,
         Instagram = 2,

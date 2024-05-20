@@ -15,40 +15,30 @@ namespace Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
-        private readonly ICompanyRepository _companyRepository;
 
         public UserService(
             IUserRepository userRepository,
-            IUnitOfWork unitOfWork,
-            ICompanyRepository companyRepository
+            IUnitOfWork unitOfWork
             )
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
-            _companyRepository = companyRepository;
         }
 
 
         public async Task<TokenDto> LoginAsync(UserViewModel userModel)
         {
-            //var user = await _userRepository.GetOneAsync(
-            //    predicate: p => p.Email == userModel.Email); 
+            var user = await _userRepository.GetOneAsync(
+                predicate: p => p.Email == userModel.Email);
 
-            if (userModel.Email == "test@gmail.com" && userModel.Password == "testAccount") //user != null && PasswordHasher.VerifyPassword(user?.Password, userModel.Password))
+            if (user != null && PasswordHasher.VerifyPassword(user.Password, userModel.Password))
             {
-                var user = new User()
-                {
-                    Id = 1,
-                    CompanyId = 1
-                };
-
                 var token = new TokenJWTBuilder()
                 .AddSecurityKey(JwtSecurityKey.Create(Environment.GetEnvironmentVariable("SECRET_TOKEN")))
                 .AddSubject("Token")
                 .AddIssuer("SocialHub.Security.Bearer")
                 .AddAudience("SocialHub.Security.Bearer")
                 .AddClaim("UserId", user.Id.ToString())
-                .AddClaim("CompanyId", user.CompanyId.ToString())
                 .AddExpiry(60)
                 .Builder();
 
@@ -76,8 +66,6 @@ namespace Application.Services
                 Name = userModel.Name,
                 Email = userModel.Email,
                 Password = passwordHash,
-                Role = userModel.Role,
-                CompanyId = userModel.CompanyId,
             });
             return await _unitOfWork.CommitAsync();
         }

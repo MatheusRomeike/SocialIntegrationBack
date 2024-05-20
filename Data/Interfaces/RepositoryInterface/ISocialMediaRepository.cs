@@ -1,4 +1,4 @@
-﻿using Domain.Entities.SocialNetwork;
+﻿using Domain.Entities.SocialMedia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Data.Interfaces.RepositoryInterface
 {
-    public interface ISocialNetworkRepository : IBaseRepository<SocialNetwork>
+    public interface ISocialMediaRepository : IBaseRepository<SocialMedia>
     {
     }
 }

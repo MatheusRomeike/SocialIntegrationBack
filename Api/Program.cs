@@ -1,7 +1,7 @@
 using Application.Context;
 using Application.Interfaces.ServiceInterfaces;
 using Application.Services;
-using Application.SocialNetworks;
+using Application.SocialMediaService;
 using Application.Token;
 using Data.Contracts;
 using Data.Repository;
@@ -9,6 +9,7 @@ using Data.Interfaces.RepositoryInterface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json.Serialization;
 
 #region Npgsql
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -28,9 +29,14 @@ var builder = WebApplication.CreateBuilder(args);
 ConfigureServices(builder.Services);
 
 builder.Logging.AddConsole();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 #region Token JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -105,18 +111,16 @@ void ConfigureServices(IServiceCollection services)
     services.AddScoped<IUnitOfWork, UnitOfWork>();
 
     services.AddScoped<IAccountRepository, AccountRepository>();
-    services.AddScoped<ICompanyRepository, CompanyRepository>();
-    services.AddScoped<IPostGroupRepository, PostGroupRepository>();
+    services.AddScoped<IAccountConfigurationRepository, AccountConfigurationRepository>();
     services.AddScoped<IPostRepository, PostRepository>();
-    services.AddScoped<ISocialNetworkRepository, SocialNetworkRepository>();
+    services.AddScoped<ISocialMediaRepository, SocialMediaRepository>();
+    services.AddScoped<ISocialMediaConfigurationRepository, SocialMediaConfigurationRepository>();
     services.AddScoped<IUserRepository, UserRepository>();
 
 
-    services.AddScoped<IPublishService, PublishService>();
-    services.AddScoped<IRestClientService, RestClientService>();
+    services.AddScoped<IAccountService, AccountService>();
+    services.AddScoped<ISocialMediaService, SocialMediaService>();
     services.AddScoped<IUserService, UserService>();
-    services.AddScoped<ISocialNetworkService, SocialNetworkService>();
 
-
-    services.AddScoped<ISocialNetworkPublishService, XService>();
+    services.AddScoped<IPublishService, XService>();
 }

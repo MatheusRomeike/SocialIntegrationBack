@@ -1,9 +1,15 @@
-﻿using Application.ViewModels;
+﻿
+
+using Domain.Entities.Account;
+using Domain.Entities.Post;
+using Domain.Entities.SocialMedia.Enums;
 
 namespace Application.Interfaces.ServiceInterfaces
 {
     public interface IPublishService
     {
-        Task<bool> PublishAsync(PublishViewModel model, long userId);
+        public SocialMediaType SocialMediaType { get; }
+
+        Task<List<Post>> PublishAsync(string postId, string text, IEnumerable<Account> accounts);
     }
 }

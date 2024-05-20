@@ -1,5 +1,5 @@
-﻿using Domain.Entities.Company;
-using Domain.Entities.Post;
+﻿using Domain.Entities.Post;
+using Domain.Entities.User;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Configuration
@@ -10,19 +10,18 @@ namespace Data.Configuration
         {
             base.Configure(builder);
 
-            builder.Property(x => x.SocialNetworkPostId)
-                .IsRequired();
+            builder.HasKey(x => new { x.Id, x.AccountId });
 
-            builder.HasOne(x => x.PostGroup)
+            builder.Property(x => x.AccountId).IsRequired();
+            builder.Property(x => x.SocialMediaPostId).IsRequired();
+            builder.Property(x => x.SocialMediaId).IsRequired();
+            builder.Property(x => x.Text).IsRequired().HasMaxLength(1000);
+            builder.Property(x => x.ImageQuantity);
+
+            builder
+                .HasOne(x => x.Account)
                 .WithMany(x => x.Posts)
-                .HasForeignKey(x => x.PostGroupId)
-                .IsRequired();
-
-            builder.HasOne(x => x.Account)
-                .WithMany(x => x.Posts)
-                .HasForeignKey(x => x.AccountId)
-                .IsRequired();
-
+                .HasForeignKey(x => x.AccountId);
         }
     }
 }
