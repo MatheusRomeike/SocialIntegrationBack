@@ -85,10 +85,11 @@ if (app.Environment.IsDevelopment())
 
 var urlDev = "https://pocmatheus.web.app";
 var urlDevLocal = "http://localhost:4200";
+var urlDevLocalHttps = "https://localhost:4200";
 app.UseCors(x => x
     .AllowAnyOrigin()
     .AllowAnyMethod()
-    .AllowAnyHeader().WithOrigins(urlDev, urlDevLocal));
+    .AllowAnyHeader().WithOrigins(urlDev, urlDevLocalHttps, urlDevLocal));
 #endregion
 
 app.UseHttpsRedirection();
@@ -122,5 +123,6 @@ void ConfigureServices(IServiceCollection services)
     services.AddScoped<ISocialMediaService, SocialMediaService>();
     services.AddScoped<IUserService, UserService>();
 
-    services.AddScoped<IPublishService, XService>();
+    services.AddScoped<ISocialMediaIntegrationService, XService>();
+    services.AddScoped<ISocialMediaIntegrationService, InstagramService>();
 }

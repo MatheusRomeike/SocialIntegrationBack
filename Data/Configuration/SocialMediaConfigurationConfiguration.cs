@@ -10,13 +10,15 @@ namespace Data.Configuration
         {
             base.Configure(builder);
 
+            builder.Property(x => x.BaseUrl).HasMaxLength(100);
+            builder.Property(x => x.AuthorizationUrl).HasMaxLength(100);
             builder.Property(x => x.ClientId).HasMaxLength(100);
             builder.Property(x => x.ClientSecret).HasMaxLength(100);
             builder.Property(x => x.RedirectUri).HasMaxLength(100);
             builder.Property(x => x.Scope).HasMaxLength(100);
+            builder.Property(x => x.GrantType).HasMaxLength(100);
             builder.Property(x => x.ResponseType).HasMaxLength(100);
-            builder.Property(x => x.BaseUrl).HasMaxLength(100);
-            builder.Property(x => x.AuthorizationUrl).HasMaxLength(100);
+            builder.Property(x => x.ExtraUrlInfo).HasMaxLength(100);
 
             builder
                 .HasOne(x => x.SocialMedia)

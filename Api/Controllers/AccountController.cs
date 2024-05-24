@@ -22,5 +22,17 @@ namespace Api.Controllers
         {
             return await TaskAsync(async () => await _accountService.Accounts(UserId));
         }
+
+        [HttpGet("AuthenticateAsync")]
+        public async Task<IActionResult> AuthenticateAsync(string code, string socialMediaName)
+        {
+            return await TaskAsync(async () => await _accountService.AuthenticateAsync(code, socialMediaName, UserId));
+        }
+
+        [HttpDelete("{socialMediaName}")]
+        public async Task<IActionResult> DisconnectAccountAsync(string socialMediaName)
+        {
+            return await TaskAsync(async () => await _accountService.DisconnectAccountAsync(socialMediaName, UserId));
+        }
     }
 }

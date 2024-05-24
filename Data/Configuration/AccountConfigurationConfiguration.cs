@@ -11,8 +11,9 @@ namespace Data.Configuration
             base.Configure(builder);
 
             builder.Property(x => x.Id).ValueGeneratedNever();
-            builder.Property(x => x.AccessToken).IsRequired().HasMaxLength(100);
-            builder.Property(x => x.RefreshToken).HasMaxLength(100);
+            builder.Property(x => x.AccessToken).IsRequired().HasMaxLength(500);
+            builder.Property(x => x.RefreshToken).HasMaxLength(500);
+            builder.Property(x => x.TokenType).HasMaxLength(50);
 
             builder
                 .HasOne(x => x.Account)
