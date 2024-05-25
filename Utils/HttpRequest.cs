@@ -1,7 +1,8 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Utils
 {
@@ -14,59 +15,80 @@ namespace Utils
             _client = new HttpClient();
         }
 
-        public async Task<T> GetAsync<T>(string url, IDictionary<string, string> headers = null)
+        public async Task<T> SendAsync<T>(
+            string url,
+            HttpMethod method,
+            object data = null,
+            IDictionary<string, string> headers = null,
+            string contentType = "application/json")
         {
             AddHeaders(headers);
-            var response = await _client.GetAsync(url);
+
+            HttpRequestMessage request = new HttpRequestMessage(method, url);
+
+            if (data != null)
+            {
+                if (contentType == "application/json")
+                {
+                    var json = JsonSerializer.Serialize(data);
+                    request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+                else if (contentType == "application/x-www-form-urlencoded" && data is IDictionary<string, string> formData)
+                {
+                    request.Content = new FormUrlEncodedContent(formData);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unsupported content type or data format");
+                }
+            }
+
+            var response = await _client.SendAsync(request);
             return await HandleResponse<T>(response);
         }
 
-        public async Task<T> PostAsync<T>(string url, object data, IDictionary<string, string> headers = null)
+        public async Task<byte[]> SendForBytesAsync(
+            string url,
+            HttpMethod method,
+            object data = null,
+            IDictionary<string, string> headers = null,
+            string contentType = "application/json")
         {
             AddHeaders(headers);
-            var json = JsonSerializer.Serialize(data);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync(url, content);
-            return await HandleResponse<T>(response);
-        }
 
-        public async Task<byte[]> DownloadImageAsync(string imageUrl, IDictionary<string, string> headers = null)
-        {
-            AddHeaders(headers);
-            using (HttpClient client = new HttpClient())
+            HttpRequestMessage request = new HttpRequestMessage(method, url);
+
+            if (data != null)
             {
-                HttpResponseMessage response = await client.GetAsync(imageUrl);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsByteArrayAsync();
+                if (contentType == "application/json")
+                {
+                    var json = JsonSerializer.Serialize(data);
+                    request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+                else if (contentType == "application/x-www-form-urlencoded" && data is IDictionary<string, string> formData)
+                {
+                    request.Content = new FormUrlEncodedContent(formData);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unsupported content type or data format");
+                }
             }
-        }
 
-        public async Task<string> DownloadImageAsBase64Async(string imageUrl, IDictionary<string, string> headers = null)
-        {
-            AddHeaders(headers);
-            using (HttpClient client = new HttpClient())
-            {
-                HttpResponseMessage response = await client.GetAsync(imageUrl);
-                response.EnsureSuccessStatusCode();
-                byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
-                string base64String = Convert.ToBase64String(imageBytes);
-                return base64String;
-            }
+            var response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsByteArrayAsync();
         }
-
 
         private void AddHeaders(IDictionary<string, string> headers)
         {
+            _client.DefaultRequestHeaders.Clear();
             if (headers != null)
             {
                 foreach (var header in headers)
                 {
                     _client.DefaultRequestHeaders.Add(header.Key, header.Value);
                 }
-            }
-            else
-            {
-                _client.DefaultRequestHeaders.Clear();
             }
         }
 

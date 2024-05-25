@@ -4,13 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Domain.Dtos.SocialMedia.Instagram
 {
-    public class BusinessAccountResponseDto
+    public class PostResponseDto
     {
-        [JsonProperty("data")]
-        public List<AccountDto> Data { get; set; }
+        [JsonProperty("id")]
+        public string Id { get; set; }
     }
 }

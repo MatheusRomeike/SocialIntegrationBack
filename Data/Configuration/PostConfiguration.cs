@@ -12,6 +12,8 @@ namespace Data.Configuration
 
             builder.HasKey(x => new { x.Id, x.AccountId });
 
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
+
             builder.Property(x => x.AccountId).IsRequired();
             builder.Property(x => x.SocialMediaPostId).IsRequired();
             builder.Property(x => x.SocialMediaId).IsRequired();

@@ -59,7 +59,7 @@ namespace Application.Services
                     var socialMediaConfiguration = await _socialMediaConfigurationRepository.GetOneAsync(include: i => i.Include(x => x.SocialMedia), predicate: p => p.SocialMedia.Name.ToLower() == socialMediaName);
                     var socialMediaService = _socialMediaServices.Where(p => (int)p.SocialMediaType == socialMediaConfiguration.Id).First();
 
-                    if (_accountRepository.GetOneAsync(predicate: p => p.UserId == userId && p.SocialMediaId == socialMediaConfiguration.Id) != null)
+                    if (await _accountRepository.GetOneAsync(predicate: p => p.UserId == userId && p.SocialMediaId == socialMediaConfiguration.Id) != null)
                     {
                         return false;
                     }

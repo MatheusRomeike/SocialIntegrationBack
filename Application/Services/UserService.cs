@@ -39,13 +39,13 @@ namespace Application.Services
                 .AddIssuer("SocialHub.Security.Bearer")
                 .AddAudience("SocialHub.Security.Bearer")
                 .AddClaim("UserId", user.Id.ToString())
-                .AddExpiry(60)
+                .AddExpiry(60 * 12)
                 .Builder();
 
                 var authenticationResult = new TokenDto
                 {
                     AccessToken = token.Value,
-                    ExpiresIn = 3600 * 24 * 365
+                    ExpiresIn = 60 * 60 * 12
                 };
 
                 return authenticationResult;
