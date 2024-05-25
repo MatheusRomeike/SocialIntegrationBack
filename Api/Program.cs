@@ -125,4 +125,5 @@ void ConfigureServices(IServiceCollection services)
 
     services.AddScoped<ISocialMediaIntegrationService, XService>();
     services.AddScoped<ISocialMediaIntegrationService, InstagramService>();
+    services.AddScoped<ISocialMediaIntegrationService, FacebookService>();
 }
