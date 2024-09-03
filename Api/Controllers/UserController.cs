@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Application.Interfaces.ServiceInterfaces;
 using Application.Services;
 using Application.ViewModels;
+using Domain.Dtos.Token;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,14 +24,15 @@ namespace Api.Controllers
         }
 
         [AllowAnonymous]
+        [ProducesResponseType(200, Type = typeof(TokenDto))]
         [HttpPost("LoginAsync")]
         public Task<IActionResult> LoginAsync([FromBody] UserViewModel user)
         {
-            Console.WriteLine(user.Date);
             return TaskAsync(async () => await _userService.LoginAsync(user));
         }
 
         [AllowAnonymous]
+        [ProducesResponseType(200, Type = typeof(bool))]
         [HttpPost("RegisterAsync")]
         public Task<IActionResult> RegisterAsync([FromBody] UserRegisterViewModel user)
         {

@@ -3,6 +3,7 @@ using System;
 using Application.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class ContextBaseModelSnapshot : ModelSnapshot
+    [Migration("20240525131307_SocialMediaPostIdString")]
+    partial class SocialMediaPostIdString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,6 +43,10 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasMaxLength(60)
                         .HasColumnType("character varying(60)");
+
+                    b.Property<byte[]>("ProfilePicture")
+                        .IsRequired()
+                        .HasColumnType("bytea");
 
                     b.Property<long>("SocialMediaAccountId")
                         .HasColumnType("bigint");
@@ -139,50 +146,6 @@ namespace Data.Migrations
                     b.HasIndex("AccountId");
 
                     b.ToTable("Post");
-                });
-
-            modelBuilder.Entity("Domain.Entities.SocialMedia.PostType", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string[]>("AcceptedMediaTypes")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("MaxCharacters")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("MediaAspectRatio")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<long>("SocialMediaId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SocialMediaId");
-
-                    b.ToTable("PostType");
                 });
 
             modelBuilder.Entity("Domain.Entities.SocialMedia.SocialMedia", b =>
@@ -362,17 +325,6 @@ namespace Data.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("Domain.Entities.SocialMedia.PostType", b =>
-                {
-                    b.HasOne("Domain.Entities.SocialMedia.SocialMedia", "SocialMedia")
-                        .WithMany("PostTypes")
-                        .HasForeignKey("SocialMediaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SocialMedia");
-                });
-
             modelBuilder.Entity("Domain.Entities.SocialMedia.SocialMediaConfiguration", b =>
                 {
                     b.HasOne("Domain.Entities.SocialMedia.SocialMedia", "SocialMedia")
@@ -394,8 +346,6 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.SocialMedia.SocialMedia", b =>
                 {
-                    b.Navigation("PostTypes");
-
                     b.Navigation("SocialMediaConfiguration")
                         .IsRequired();
                 });

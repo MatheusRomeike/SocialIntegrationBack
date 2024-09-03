@@ -117,6 +117,7 @@ void ConfigureServices(IServiceCollection services)
     services.AddScoped<ISocialMediaRepository, SocialMediaRepository>();
     services.AddScoped<ISocialMediaConfigurationRepository, SocialMediaConfigurationRepository>();
     services.AddScoped<IUserRepository, UserRepository>();
+    services.AddScoped<IPostTypeRepository, PostTypeRepository>();
 
 
     services.AddScoped<IAccountService, AccountService>();

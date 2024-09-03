@@ -10,7 +10,7 @@ namespace Domain.Entities.Post
     public class Post : BaseEntity
     {
         public long AccountId { get; set; }
-        public long SocialMediaPostId { get; set; }
+        public string SocialMediaPostId { get; set; }
         public long SocialMediaId { get; set; }
         public string Text { get; set; }
         public int ImageQuantity { get; set; }

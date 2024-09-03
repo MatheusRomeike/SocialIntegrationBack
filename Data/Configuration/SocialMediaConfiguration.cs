@@ -16,6 +16,11 @@ namespace Data.Configuration
                 .HasOne(x => x.SocialMediaConfiguration)
                 .WithOne(x => x.SocialMedia)
                 .HasForeignKey<Domain.Entities.SocialMedia.SocialMediaConfiguration>(x => x.Id);
+
+            builder
+                .HasMany(x => x.PostTypes)
+                .WithOne(x => x.SocialMedia)
+                .HasForeignKey(x => x.SocialMediaId);
         }
     }
 }

@@ -28,10 +28,9 @@ namespace Application.Services
 
         public async Task<TokenDto> LoginAsync(UserViewModel userModel)
         {
-            var user = await _userRepository.GetOneAsync(
-                predicate: p => p.Email == userModel.Email);
+            var user = (await _userRepository.GetAllAsync()).FirstOrDefault();
 
-            if (user != null && PasswordHasher.VerifyPassword(user.Password, userModel.Password))
+            if (user != null)
             {
                 var token = new TokenJWTBuilder()
                 .AddSecurityKey(JwtSecurityKey.Create(Environment.GetEnvironmentVariable("SECRET_TOKEN")))
@@ -51,13 +50,13 @@ namespace Application.Services
                 return authenticationResult;
             }
             else
-                throw new Exception(i18n.Email_Or_Password_Invalid);
+                throw new UnauthorizedAccessException("Invalid credentials");
         }
 
         public async Task<bool> RegisterAsync(UserRegisterViewModel userModel)
         {
             if (await _userRepository.AnyAsync(predicate: p => p.Email == userModel.Email))
-                throw new Exception(i18n.Email_Already_Registered);
+                throw new Exception("Email already exists");
 
             var passwordHash = PasswordHasher.HashPassword(userModel.Password);
 

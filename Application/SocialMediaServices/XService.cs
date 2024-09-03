@@ -46,7 +46,6 @@ namespace Application.SocialMediaService
 
             account.SocialMediaAccountId = Convert.ToInt64(accountInfo.Id);
             account.Name = accountInfo.Name;
-            account.ProfilePicture = await _httpRequest.SendForBytesAsync(accountInfo.ProfileImageUrl.Replace("_normal", ""), HttpMethod.Get);
             account.SocialMediaId = socialMediaConfiguration.Id;
 
 
@@ -80,7 +79,7 @@ namespace Application.SocialMediaService
                 posts.Add(new Post()
                 {
                     AccountId = account.Id,
-                    SocialMediaPostId = Convert.ToInt64(response.Data.Id),
+                    SocialMediaPostId = response.Data.Id,
                     SocialMediaId = socialMedia.SocialMediaConfiguration.Id,
                     Text = model.Text,
                     ImageQuantity = 1

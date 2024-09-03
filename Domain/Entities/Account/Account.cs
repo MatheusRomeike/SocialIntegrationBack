@@ -13,7 +13,6 @@ namespace Domain.Entities.Account
         public long SocialMediaId { get; set; }
         public long UserId { get; set; }
         public string Name { get; set; }
-        public byte[] ProfilePicture { get; set; }
 
         public virtual AccountConfiguration AccountConfiguration { get; set; }
         public virtual User.User User { get; set; }

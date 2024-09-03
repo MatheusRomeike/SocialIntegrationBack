@@ -13,5 +13,6 @@ namespace Domain.Entities.SocialMedia
         public string Url { get; set; }
 
         public virtual SocialMediaConfiguration SocialMediaConfiguration { get; set; }
+        public virtual ICollection<PostType> PostTypes { get; set; }
     }
 }

@@ -45,7 +45,6 @@ namespace Application.Services
                                    selector: s => new Account()
                                    {
                                        Name = s.Name,
-                                       ProfilePicture = s.ProfilePicture,
                                        SocialMediaId = s.SocialMediaId,
                                    });
         }

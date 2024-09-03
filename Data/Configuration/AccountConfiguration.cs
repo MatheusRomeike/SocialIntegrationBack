@@ -14,7 +14,6 @@ namespace Data.Configuration
             builder.Property(x => x.SocialMediaId).IsRequired();
             builder.Property(x => x.UserId).IsRequired();
             builder.Property(x => x.Name).IsRequired().HasMaxLength(60);
-            builder.Property(x => x.ProfilePicture).IsRequired();
 
             builder
                 .HasOne(x => x.AccountConfiguration)
